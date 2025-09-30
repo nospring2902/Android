@@ -1,40 +1,40 @@
 import kotlin.math.abs
 
-class PhanSo(var tu: Int, var mau: Int) {
+class Fraction(var numerator: Int, var denominator: Int) {
 
     // Nhập phân số từ bàn phím
-    fun nhap() {
+    fun input() {
         while (true) {
-            print("Nhập tử số: ")
-            tu = readln().toInt()
-            print("Nhập mẫu số: ")
-            mau = readln().toInt()
-            if (mau != 0) break
-            println("Mẫu số không được bằng 0, vui lòng nhập lại!")
+            print("Enter numerator: ")
+            numerator = readln().toInt()
+            print("Enter denominator: ")
+            denominator = readln().toInt()
+            if (denominator != 0) break
+            println("Denominator cannot be zero, please enter again!")
         }
     }
 
     // In phân số
-    fun xuat() {
-        println("$tu/$mau")
+    fun display() {
+        println("$numerator/$denominator")
     }
 
     // Tối giản phân số
-    fun toiGian() {
-        val ucln = gcd(abs(tu), abs(mau))
-        tu /= ucln
-        mau /= ucln
+    fun simplify() {
+        val gcdValue = gcd(abs(numerator), abs(denominator))
+        numerator /= gcdValue
+        denominator /= gcdValue
         // chuẩn hóa mẫu dương
-        if (mau < 0) {
-            tu = -tu
-            mau = -mau
+        if (denominator < 0) {
+            numerator = -numerator
+            denominator = -denominator
         }
     }
 
     // So sánh với một phân số khác
-    fun soSanh(ps: PhanSo): Int {
-        val left = this.tu * ps.mau
-        val right = ps.tu * this.mau
+    fun compare(fraction: Fraction): Int {
+        val left = this.numerator * fraction.denominator
+        val right = fraction.numerator * this.denominator
         return when {
             left < right -> -1
             left == right -> 0
@@ -43,12 +43,12 @@ class PhanSo(var tu: Int, var mau: Int) {
     }
 
     // Cộng với một phân số khác
-    fun cong(ps: PhanSo): PhanSo {
-        val tuMoi = this.tu * ps.mau + ps.tu * this.mau
-        val mauMoi = this.mau * ps.mau
-        val kq = PhanSo(tuMoi, mauMoi)
-        kq.toiGian()
-        return kq
+    fun add(fraction: Fraction): Fraction {
+        val newNumerator = this.numerator * fraction.denominator + fraction.numerator * this.denominator
+        val newDenominator = this.denominator * fraction.denominator
+        val result = Fraction(newNumerator, newDenominator)
+        result.simplify()
+        return result
     }
 
     companion object {
@@ -59,42 +59,42 @@ class PhanSo(var tu: Int, var mau: Int) {
 }
 
 fun main() {
-    print("Nhập số lượng phân số: ")
+    print("Enter number of fractions: ")
     val n = readln().toInt()
-    val arr = Array(n) { PhanSo(0, 1) }
+    val arr = Array(n) { Fraction(0, 1) }
 
     // Nhập mảng phân số
     for (i in arr.indices) {
-        println("Nhập phân số thứ ${i + 1}:")
-        arr[i].nhap()
+        println("Enter fraction ${i + 1}:")
+        arr[i].input()
     }
 
-    println("\n📌 Mảng phân số vừa nhập:")
-    arr.forEach { it.xuat() }
+    println("\n Array of entered fractions:")
+    arr.forEach { it.display() }
 
     // Tối giản và in
-    println("\n📌 Mảng phân số sau khi tối giản:")
+    println("\n Array of fractions after simplification:")
     arr.forEach { 
-        it.toiGian()
-        it.xuat()
+        it.simplify()
+        it.display()
     }
 
     // Tính tổng
-    var tong = PhanSo(0, 1)
-    for (ps in arr) tong = tong.cong(ps)
-    println("\n📌 Tổng các phân số:")
-    tong.xuat()
+    var sum = Fraction(0, 1)
+    for (fraction in arr) sum = sum.add(fraction)
+    println("\n Sum of fractions:")
+    sum.display()
 
     // Tìm max
     var max = arr[0]
-    for (ps in arr) {
-        if (ps.soSanh(max) > 0) max = ps
+    for (fraction in arr) {
+        if (fraction.compare(max) > 0) max = fraction
     }
-    println("\n📌 Phân số lớn nhất:")
-    max.xuat()
+    println("\n Largest fraction:")
+    max.display()
 
     // Sắp xếp giảm dần
-    arr.sortWith { a, b -> b.soSanh(a) }
-    println("\n📌 Mảng phân số sau khi sắp xếp giảm dần:")
-    arr.forEach { it.xuat() }
+    arr.sortWith { a, b -> b.compare(a) }
+    println("\n Array of fractions after sorting in descending order:")
+    arr.forEach { it.display() }
 }
